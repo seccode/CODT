@@ -19,12 +19,14 @@ by variable name 'm'
 
 This digit string is then broken up in pieces by size 4300
 (max string to int conversion length in Python). Each piece
-is converted to an integer. The list of integers, represented
-by variable name 'y', the variable 'm', and the length of the
-binary string 'n' is returned by the compressor.
+is converted to an integer. The length of the last piece
+is record as 'k' in case it starts with 0(s). The list of integers,
+represented by variable name 'y', the variable 'm', and the length of
+the binary string 'n' is returned by the compressor.
 
 To decompress, each integer in 'y' is converted to string and padded
-to set each length as 4300. Each integer string is then joined into
+to set each length as 4300. The last integer takes into account 'k'
+when deciding how many 0s to pad. Each integer string is then joined into
 one string and broken down into 'm' length pieces and converted to
 integers, representing the original indices of 1s in the binary string.
 The binary string can then be recomposed from the length of the binary

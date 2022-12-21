@@ -1,3 +1,4 @@
+#This code is licensed under UNLICENSE http://unlicense.org
 import collections,math,sys,time
 
 """
@@ -55,14 +56,15 @@ def c(b):
 		_y=[l[i:i+L] for i in range(0,len(l),L)]
 		k=len(_y[-1])
 		y=[int(__y) for __y in _y]
-	return (y,m,len(b))
+	return (y,k,m,len(b))
 
 #Decompress
-def d(y,m,n):
+def d(y,k,m,n):
 	z=[]
-	for _y in y:
+	for _y in y[:-1]:
 		z.append("0"*(L-len(str(_y)))+str(_y))
 	if len(y)!=0:
+		z.append("0"*(k-len(str(y[-1])))+str(y[-1]))
 		_l="".join(z)
 		l=[int(_l[i:i+m]) for i in range(0,len(_l),m)]
 		l2=[l[0]]
@@ -78,12 +80,14 @@ def d(y,m,n):
 
 def main():
 	t=time.time()
-	enwik9=open("enwik9","r")
+	enwik9=open("enwik9","rb")
 	q=sys.getsizeof(enwik9.read())
 	enwik9.close()
 	enwik9=open("enwik9","rb")
+	#Variable for tracking compressed size
 	w=0
 	#Read file in chunks
+	j=0
 	while piece:=enwik9.read(1000000):
 		if not piece:
 			break
@@ -94,10 +98,10 @@ def main():
 			#String to binary string
 			b,_c=s2b(s)
 			#Compress
-			y,m,n=c(b)
-			w+=sys.getsizeof(y)+sys.getsizeof(_c)+sys.getsizeof(m)+sys.getsizeof(n)
+			y,k,m,n=c(b)
+			w+=sys.getsizeof(_c)+sys.getsizeof(y)+sys.getsizeof(k)+sys.getsizeof(m)+sys.getsizeof(n)
 			#Decompress
-			_b=d(y,m,n)
+			_b=d(y,k,m,n)
 			#Binary string to string
 			_s=b2s(_b,_c)
 			#Decompress(Compress(s))==s
