@@ -1,4 +1,5 @@
 #Algorithm
+
 This algorithm works by first converting the input string
 to a binary string. Each character is given a unique
 binary representation according to its order in the set
