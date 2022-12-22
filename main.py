@@ -1,5 +1,5 @@
 #This code is licensed under UNLICENSE http://unlicense.org
-import collections,math,sys,time
+import collections,math,os,sys,time
 
 """
 Algorithm idea:
@@ -81,13 +81,8 @@ def d(y,k,m,n):
 def main():
 	t=time.time()
 	enwik9=open("enwik9","rb")
-	q=sys.getsizeof(enwik9.read())
-	enwik9.close()
-	enwik9=open("enwik9","rb")
-	#Variable for tracking compressed size
-	w=0
 	#Read file in chunks
-	j=0
+	A=[]
 	while piece:=enwik9.read(1000000):
 		if not piece:
 			break
@@ -99,19 +94,12 @@ def main():
 			b,_c=s2b(s)
 			#Compress
 			y,k,m,n=c(b)
-			w+=sys.getsizeof(_c)+sys.getsizeof(y)+sys.getsizeof(k)+sys.getsizeof(m)+sys.getsizeof(n)
-			#Decompress
-			_b=d(y,k,m,n)
-			#Binary string to string
-			_s=b2s(_b,_c)
-			#Decompress(Compress(s))==s
-			assert _s==s
+			A.append((y,k,m,n,_c))
 		print(time.time()-t)
-	#Print compression ratio
-	print(w/q)
 	enwik9.close()
-	print(time.time()-t)
+	rw="def de(): open('data9','w').write(''.join([b2s(d(_d[0],_d[1],_d[2],_d[3]),_d[-1]) for _d in {}]))".format(A)
 	return
 
 if __name__=="__main__":
-	main()
+	#main()
+	de()
