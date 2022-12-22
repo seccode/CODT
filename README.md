@@ -35,3 +35,5 @@ string 'n' and the indices of 1s.
 
 To reform the original string, each unique binary value is remapped
 to its original character.
+
+Run `python3 comp9.py` to compress and `python3 archive9.py` to decompress. `comp9.py` is a self-modifying script that changes to `archive9.py`
