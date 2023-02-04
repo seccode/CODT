@@ -36,12 +36,14 @@ if __name__=="__main__":
 	c=collections.Counter(s).most_common()[::-1][:len(t)]
 	f={_c[0]:_t for _c,_t in zip(c,t)}
 	x=list(s)
+	del s,t,g,c
 	h=set([chr(i) for i in range(256)])
 	for i in tqdm.tqdm(range(len(x))):
 		if x[i] in f and x[i] not in h:
 			x[i]=f[x[i]]
 	x="".join(x)
 	b,c=sb(x)
+	del x
 	f=open("b","w")
 	f.write(b)
 	f.close()
