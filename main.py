@@ -60,9 +60,14 @@ if __name__=="__main__":
 	]
 	v=[0]*B
 	for d in tqdm.tqdm(ds):
+		print(d)
 		x=d*int(B/len(d))
+		c=0
 		for i in tqdm.tqdm(range(len(x))):
 			v[i]+=x[i]
+			if x[i]==b[i]:
+				c+=1
+		print(c/B)
 
 	D=len(ds)
 	acc=0
