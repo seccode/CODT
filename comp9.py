@@ -1,9 +1,6 @@
-#This code is licensed under UNLICENSE http://unlicense.org
-import collections,math,os,sys
-
-#Algorithm:
-#Find long periodic sequences in binary string
-#that repeat on 1s
+import collections,math,random,tqdm
+import matplotlib.pyplot as plt
+import numpy as np
 
 #String to binary string
 def sb(s):
@@ -19,29 +16,33 @@ def sb(s):
 	return ("".join(_d[_s] for _s in s),"".join([_c[0] for _c in c]))
 
 #Binary string to string
-def bs(b):
+def bs(b,c):
 	N=math.ceil(math.log(len(c))/math.log(2))
 	d={i:_c[0] for i,_c in enumerate(c)}
 	return "".join([d[int(b[i:i+N],2)] for i in range(0,len(b),max(1,N))])
 
-#Compress
-def c(s):
-	c=collections.Counter(s).most_common()
-	print(c)
-	return
-
-def main():
-	s=open("enwik","r").read()[:1000]
-	print(s)
-	o=c(s)
-	print(o)
-	return
-
 if __name__=="__main__":
-	f=os.path.basename(__file__)
-	if f=="comp9.py":
-		main()
-		#os.rename("comp9.py","decomp9.py")
-	else:
-		de()
-		os.rename("decomp9.py","comp9.py")
+	s=open("enwik9","r").read()
+	print(len(s))
+	g=set()
+	for i in tqdm.tqdm(range(0,len(s)-1)):
+		g.add(s[i:i+2])
+	t=[]
+	for i in range(256):
+		for j in range(256):
+			_t=chr(i)+chr(j)
+			if _t not in g:
+				t.append(_t)
+	c=collections.Counter(s).most_common()[::-1][:len(t)]
+	f={_c[0]:_t for _c,_t in zip(c,t)}
+	x=list(s)
+	h=set([chr(i) for i in range(256)])
+	for i in tqdm.tqdm(range(len(x))):
+		if x[i] in f and x[i] not in h:
+			x[i]=f[x[i]]
+	x="".join(x)
+	b,c=sb(x)
+	f=open("b","w")
+	f.write(b)
+	f.close()
+	

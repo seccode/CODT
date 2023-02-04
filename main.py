@@ -1,39 +1,48 @@
-import collections,lzma,sys,tqdm
+import tqdm
 
-s=open("enwik9","r").read()
-words=s.split(" ")
-word_set=[c[0] for c in collections.Counter(words).most_common()]
-c=[chr(i) for i in range(3223)]
-tc=[None]*len(c)**2
-i=0
-for c1 in c:
-	for c2 in c:
-		tc[i]=c1+c2
-		i+=1
-tc=sorted(tc,key=sys.getsizeof)[:len(word_set)]
-f={word:i for i,word in enumerate(word_set)}
-w=[None]*len(words)
-for i,word in tqdm.tqdm(enumerate(words),total=len(words)):
-	w[i]=tc[f[word]]
+if __name__=="__main__":
+	b=open("b","r").read()
+	B=len(b)
+	del b
 
-w="".join(w)
-T=int(len(w)/2)
-w=w[:T]+w[T:]
-ws=" ".join(word_set)
-h=list(set([chr(i) for i in range(1114111)])-set(s))
-i=0
-n=[
-"http://www.",
-"http://",
-".com",
-".org",
-"https://",
-"&quot;",
-"&amp;"
-]
-f=open("w","w")
-f.write(ws)
-f.close()
+	ds=[
+	"0",
+	"01",
+	"1000",
+	"0100",
+	"0010",
+	"0001",
+	"0011",
+	"1001",
+	"10000",
+	"01000",
+	"00100",
+	"00010",
+	"00001",
+	"100000",
+	"010000",
+	"001000",
+	"000100",
+	"000010",
+	"000001",
+	"1000000",
+	"0100000",
+	"0010000",
+	"0001000",
+	"0000100",
+	"0000010",
+	"0000001",
+	]
+	v=[0]*B
+	for d in tqdm.tqdm(ds):
+		x=d*int(B/len(d))
+		for i in tqdm.tqdm(range(len(x))):
+			v[i]+=x[i]
 
-r=w+ws
-#print(len(lzma.compress(r.encode("utf-8","replace"),preset=9))/len(s))
+	D=len(ds)
+	acc=0
+	for i in range(B):
+		v[i]/=D
+		if (v[i]>0.5 and b[i]=="1") or (v[i]<0.5 and b[i]=="0"):
+			acc+=1
+	print(acc/B)
