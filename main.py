@@ -1,78 +1,66 @@
-import tqdm
+import collections
+import lzma
+import math
+import random
+from tqdm import tqdm
 
-if __name__=="__main__":
-	b=open("b","r").read()
-	B=len(b)
-	del b
+#String to binary string
+def sb(s):
+    c=collections.Counter(s).most_common()
+    N=math.ceil(math.log(len(c))/math.log(2))
+    d={_c[0]:i for i,_c in enumerate(c)}
+    _d={}
+    for _c in c:
+        _b=bin(d[_c[0]])[-N:]
+        b1,b2=_b.replace("b","0"),_b.replace("b","1")
+        b1,b2="0"*(N-len(b1))+b1,"0"*(N-len(b2))+b2
+        _d[_c[0]]={1:b1,0:b2}[d[_c[0]]==int(b1,2)]
+    return ("".join(_d[_s] for _s in s),"".join([_c[0] for _c in c]))
 
-	ds=[
-	"0",
-	"01",
-	"1000",
-	"0100",
-	"0010",
-	"0001",
-	"0011",
-	"1001",
-	"10000",
-	"01000",
-	"00100",
-	"00010",
-	"00001",
-	"11000",
-	"01100",
-	"00110",
-	"00011",
-	"10100",
-	"01010",
-	"00101",
-	"100000",
-	"010000",
-	"001000",
-	"000100",
-	"000010",
-	"000001",
-	"100100",
-	"010010",
-	"001001",
-	"101000",
-	"010100",
-	"001010",
-	"000101",
-	"110000",
-	"011000",
-	"001100",
-	"000110",
-	"000011",
-	"1000000",
-	"0100000",
-	"0010000",
-	"0001000",
-	"0000100",
-	"0000010",
-	"0000001",
-	"1100000",
-	"0110000",
-	"0011000",
-	"0001100",
-	"0000110",
-	"0000011",
-	]
-	v=[0]*B
-	for d in tqdm.tqdm(ds):
-		print(d)
-		x=d*int(B/len(d))
-		c=0
-		for i in tqdm.tqdm(range(len(x))):
-			v[i]+=x[i]
-			if x[i]==b[i]:
-				c+=1
-		print(c/B)
+#Binary string to string
+def bs(b,c):
+    N=math.ceil(math.log(len(c))/math.log(2))
+    d={i:_c[0] for i,_c in enumerate(c)}
+    return "".join([d[int(b[i:i+N],2)] for i in range(0,len(b),max(1,N))])
 
-	D=len(ds)
-	acc=0
-	for i in range(B):
-		v[i]/=D
-		if (v[i]>0.5 and b[i]=="1") or (v[i]<0.5 and b[i]=="0"):
-			acc+=1
-	print(acc/B)
+#Compress
+def compress(s):
+    b,c=sb(s)
+    m,last,B,b="",0,len(b),list(b)
+    for i in range(1000):
+        random.seed(i)
+        x=[random.randint(0,1) for _ in range(B)]
+        count=sum([1 for j,_x in enumerate(x) if str(_x)==b[j]])
+        if count/B>0.52:
+            print(i)
+            m+=chr(i-last)
+            last=i
+    return (m,c,B)
+
+#Decompress
+def decompress(m,c,B):
+    b,last,xs="",0,[]
+    for i,_m in enumerate(m):
+        last+=ord(_m)
+        random.seed(last)
+        x=[random.randint(0,1) for _ in range(B)]
+        xs.append(x)
+    for i in range(B):
+        l,r=0,0
+        for x in xs:
+            if x[i]==0:
+                l+=1
+            else:
+                r+=1
+        b+={0:"1",1:"0"}[l>r]
+    s=bs(b,c)
+    return s
+
+s=open("enwik","r").read()[:500]
+m,c,B=compress(s)
+s2=m+"@@@"+c+"@@@"+B
+print(len(s2)/len(s))
+
+m,c,B=s2.split("@@@")
+_s=decompress(m,c,B)
+assert _s==s
